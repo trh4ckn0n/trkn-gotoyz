@@ -1,0 +1,41 @@
+body {
+    background: #0f0f0f;
+    color: #39ff14;
+    font-family: 'Fira Code', monospace;
+    margin: 0;
+    padding: 2em;
+}
+.crt {
+    border: 2px solid #00ffcc;
+    padding: 2em;
+    background: radial-gradient(circle, #0f0f0f 60%, #000000 100%);
+    box-shadow: 0 0 20px #00ffcc;
+    text-align: center;
+}
+.glitch {
+    font-size: 2em;
+    animation: glitch 1s infinite;
+    text-shadow: 1px 0 red, -1px 0 cyan;
+}
+@keyframes glitch {
+    0% { text-shadow: 2px 0 red, -2px 0 cyan; }
+    50% { text-shadow: -2px 0 red, 2px 0 cyan; }
+    100% { text-shadow: 2px 0 red, -2px 0 cyan; }
+}
+.subtitle {
+    color: #00ffff;
+    margin-top: 1em;
+}
+button {
+    background: #111;
+    color: #39ff14;
+    border: 2px solid #39ff14;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: 0.2s;
+}
+button:hover {
+    background: #39ff14;
+    color: black;
+}
