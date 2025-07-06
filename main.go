@@ -87,6 +87,6 @@ func main() {
     http.HandleFunc("/", loginHandler)
     http.HandleFunc("/dashboard", dashboardHandler)
 
-    fmt.Println("🧠 HiddenDoor: http://localhost:3000")
-    log.Fatal(http.ListenAndServe(":3000", nil))
+    fmt.Println("🧠 HiddenDoor: http://localhost:8000")
+    log.Fatal(http.ListenAndServe(":8000", nil))
 }
