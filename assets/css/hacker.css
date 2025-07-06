@@ -39,3 +39,26 @@ button:hover {
     background: #39ff14;
     color: black;
 }
+
+
+.system-info {
+    background: rgba(0, 255, 204, 0.08);
+    padding: 1em;
+    border: 1px solid #00ffcc;
+    margin-top: 2em;
+    text-align: left;
+}
+.system-info ul {
+    list-style: none;
+    padding-left: 0;
+}
+.system-info li {
+    margin: 0.5em 0;
+}
+a {
+    color: #00ffff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
