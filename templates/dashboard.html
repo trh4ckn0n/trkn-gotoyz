@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>HiddenDoor Terminal</title>
-    <link rel="stylesheet" href="/static/css/hacker.css">
+    <title>HiddenDoor - Shell</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <div class="dashboard-container">
-        <h1>📡 Interface HiddenDoor</h1>
+    <div class="container">
+        <h1>💻 HiddenDoor Shell - trhacknon team</h1>
+        <p>🕒 {{.Time}} | 🧠 Server: {{.Hostname}}</p>
         <form method="POST">
-            <input type="text" name="cmd" placeholder="💬 Tape une commande : id, uname, etc.">
-            <button type="submit">Envoyer</button>
+            <input type="text" name="cmd" placeholder="Tape une commande autorisée" required>
+            <button type="submit">▶️ Exécuter</button>
         </form>
-        <div class="output">
-            <pre>{{.Output}}</pre>
+        <div class="cmd-output">
+            <strong>Résultat:</strong><br>
+            {{.Output}}
         </div>
     </div>
 </body>
