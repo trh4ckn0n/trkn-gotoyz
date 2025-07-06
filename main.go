@@ -19,8 +19,6 @@ var allowedCommands = []string{
 }
 
 // Simulé (tu pourras remplacer par Argon2 plus tard)
-var passwordHash = "trhacknon"
-
 const storedHash = "7BmFwU6ohzjnsotDgiS8i9mWC6De68K6vl90mec3H6Y"
 
 func hashPassword(password string) string {
