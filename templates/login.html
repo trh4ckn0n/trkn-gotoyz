@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>🔐 Connexion HiddenDoor</title>
-    <link rel="stylesheet" href="/assets/style.css">
+    <meta charset="UTF-8" />
+    <title>Login - HiddenDoor</title>
+    <style>
+        body { background: #111; color: #0f0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        input, button { font-family: monospace; font-size: 1.2em; margin: 10px 0; padding: 8px; background: #222; color: #0f0; border: 1px solid #0f0; border-radius: 4px; }
+        button { cursor: pointer; }
+        form { display: flex; flex-direction: column; width: 250px; }
+        h1 { margin-bottom: 20px; }
+    </style>
 </head>
 <body>
-    <h1>🔑 Authentification</h1>
-    <form method="POST">
-        <input type="password" name="password" placeholder="Mot de passe">
-        <button type="submit">Entrer</button>
+    <h1>🔐 HiddenDoor Login</h1>
+    <form method="POST" action="/">
+        <input type="password" name="password" placeholder="Mot de passe" autocomplete="off" required />
+        <button type="submit">Se connecter</button>
     </form>
 </body>
 </html>
