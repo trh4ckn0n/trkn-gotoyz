@@ -1,22 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>HiddenDoor - Shell</title>
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <title>🧠 HiddenDoor Dashboard</title>
+    <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>💻 HiddenDoor Shell - trhacknon team</h1>
-        <p>🕒 {{.Time}} | 🧠 Server: {{.Hostname}}</p>
-        <form method="POST">
-            <input type="text" name="cmd" placeholder="Tape une commande autorisée" required>
-            <button type="submit">▶️ Exécuter</button>
-        </form>
-        <div class="cmd-output">
-            <strong>Résultat:</strong><br>
-            {{.Output}}
-        </div>
-    </div>
+    <h1>Bienvenue, {{.User}}</h1>
+    <p><strong>Hostname :</strong> {{.Hostname}}</p>
+    <p><strong>Date :</strong> {{.Time}}</p>
+    <p><strong>Infos système :</strong> {{.SysInfo}}</p>
+
+    <form method="POST">
+        <input type="text" name="cmd" placeholder="Commande autorisée">
+        <button type="submit">Exécuter</button>
+    </form>
+
+    <pre>{{.Output}}</pre>
 </body>
 </html>
