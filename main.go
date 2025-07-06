@@ -1,43 +1,54 @@
 package main
 
 import (
+    "crypto/rand"
+    "encoding/base64"
     "fmt"
     "html/template"
     "log"
     "net/http"
     "os/exec"
     "strings"
-	"encoding/base64"
-	"golang.org/x/crypto/argon2"
+    "time"
+
+    "golang.org/x/crypto/argon2"
     "github.com/gorilla/sessions"
 )
 
-var store = sessions.NewCookieStore([]byte("trhacknon-ultra-secret-key"))
+// ----- Configuration -----
+var (
+    store           = sessions.NewCookieStore([]byte("trhacknon-ultra-secret-key"))
+    salt            = generateSalt()
+    storedPassword  = "trhacknon"
+    storedHash      = hashPassword(storedPassword, salt)
+    allowedCommands = []string{"id", "whoami", "hostname", "uname", "uname -a"}
+)
 
-var allowedCommands = []string{
-    "id", "whoami", "hostname", "uname", "uname -a",
+// ----- Utilities -----
+func generateSalt() []byte {
+    s := make([]byte, 16)
+    _, err := rand.Read(s)
+    if err != nil {
+        panic(err)
+    }
+    return s
 }
 
-// Simulé (tu pourras remplacer par Argon2 plus tard)
-const storedHash = "7BmFwU6ohzjnsotDgiS8i9mWC6De68K6vl90mec3H6Y"
-
-func hashPassword(password string) string {
-	salt := []byte("saltsaltsalt") // Utiliser un salt sécurisé et stocké séparément en prod
-	hash := argon2.IDKey([]byte(password), salt, 1, 64*1024, 4, 32)
-	return base64.RawStdEncoding.EncodeToString(hash)
+func hashPassword(password string, salt []byte) string {
+    hash := argon2.IDKey([]byte(password), salt, 1, 64*1024, 4, 32)
+    return base64.RawStdEncoding.EncodeToString(hash)
 }
 
 func verifyPassword(password string) bool {
-	return hashPassword(password) == storedHash
+    return hashPassword(password, salt) == storedHash
 }
-
 
 func execCommand(cmd string) string {
     for _, allowed := range allowedCommands {
         if strings.TrimSpace(cmd) == allowed {
             out, err := exec.Command("bash", "-c", cmd).CombinedOutput()
             if err != nil {
-                return fmt.Sprintf("Erreur: %s", err.Error())
+                return fmt.Sprintf("❌ Erreur: %s", err.Error())
             }
             return string(out)
         }
@@ -45,6 +56,12 @@ func execCommand(cmd string) string {
     return "⛔ Commande non autorisée."
 }
 
+func systemInfo() string {
+    out, _ := exec.Command("uname", "-a").CombinedOutput()
+    return string(out)
+}
+
+// ----- Handlers -----
 func loginHandler(w http.ResponseWriter, r *http.Request) {
     session, _ := store.Get(r, "hiddendoor-session")
     if session.Values["user"] != nil {
@@ -57,6 +74,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
         password := r.FormValue("password")
         if verifyPassword(password) {
             session.Values["user"] = "trhacknon"
+            session.Options = &sessions.Options{
+                Path:     "/",
+                MaxAge:   3600,
+                HttpOnly: true,
+            }
             session.Save(r, w)
             http.Redirect(w, r, "/dashboard", http.StatusFound)
             return
@@ -80,21 +102,31 @@ func dashboardHandler(w http.ResponseWriter, r *http.Request) {
         output = execCommand(cmd)
     }
 
-    renderTemplate(w, "dashboard", map[string]string{
+    data := map[string]interface{}{
         "Output": output,
-    })
+        "SysInfo": systemInfo(),
+        "User": session.Values["user"],
+        "Time": time.Now().Format("02 Jan 2006 - 15:04:05"),
+    }
+
+    renderTemplate(w, "dashboard", data)
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
-    t, _ := template.ParseFiles("templates/" + tmpl + ".html")
+    t, err := template.ParseFiles("templates/" + tmpl + ".html")
+    if err != nil {
+        http.Error(w, "Template error", 500)
+        return
+    }
     t.Execute(w, data)
 }
 
+// ----- Main Entry -----
 func main() {
     http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
     http.HandleFunc("/", loginHandler)
     http.HandleFunc("/dashboard", dashboardHandler)
 
-    fmt.Println("🧠 HiddenDoor: http://localhost:9000")
+    fmt.Println("🧠 HiddenDoor démarré: http://localhost:9000")
     log.Fatal(http.ListenAndServe(":9000", nil))
 }
