@@ -1,0 +1,48 @@
+body {
+    background-color: #0d0d0d;
+    font-family: 'Courier New', monospace;
+    color: #00ff9f;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    color: #0ff;
+    text-shadow: 0 0 5px #0ff;
+}
+
+.container {
+    width: 90%;
+    max-width: 700px;
+    margin: 80px auto;
+    padding: 20px;
+    background-color: #111;
+    border: 1px solid #0ff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #00ff9f;
+}
+
+input, button, textarea {
+    background-color: #000;
+    color: #00ff9f;
+    border: 1px solid #0ff;
+    padding: 10px;
+    margin-top: 10px;
+    width: 100%;
+    font-size: 1em;
+}
+
+button:hover {
+    background-color: #0ff;
+    color: #000;
+    cursor: pointer;
+    text-shadow: 0 0 2px #000;
+}
+
+.cmd-output {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #000;
+    border: 1px dashed #00ff9f;
+    white-space: pre-wrap;
+}
