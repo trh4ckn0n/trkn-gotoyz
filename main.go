@@ -7,12 +7,13 @@ import (
     "html/template"
     "log"
     "net/http"
+    "os"
     "os/exec"
     "strings"
     "time"
 
-    "golang.org/x/crypto/argon2"
     "github.com/gorilla/sessions"
+    "golang.org/x/crypto/argon2"
 )
 
 // ----- Configuration -----
@@ -89,14 +90,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func dashboardHandler(w http.ResponseWriter, r *http.Request) {
-    hostname, _ := os.Hostname()
-    now := time.Now().Format("02/01/2006 15:04:05")
-
-renderTemplate(w, "dashboard", map[string]string{
-    "Output":   output,
-    "Hostname": hostname,
-    "Time":     now,
-})
     session, _ := store.Get(r, "hiddendoor-session")
     if session.Values["user"] == nil {
         http.Redirect(w, r, "/", http.StatusFound)
@@ -110,23 +103,25 @@ renderTemplate(w, "dashboard", map[string]string{
         output = execCommand(cmd)
     }
 
+    hostname, _ := os.Hostname()
+    now := time.Now().Format("02/01/2006 15:04:05")
+
     data := map[string]interface{}{
-        "Output": output,
-        "SysInfo": systemInfo(),
-        "User": session.Values["user"],
-        "Time": time.Now().Format("02 Jan 2006 - 15:04:05"),
+        "Output":   output,
+        "User":     session.Values["user"],
+        "SysInfo":  systemInfo(),
+        "Hostname": hostname,
+        "Time":     now,
     }
 
-renderTemplate(w, "dashboard", map[string]string{
-    "Output":   output,
-    "Hostname": hostname,
-    "Time":     now,
-})
+    renderTemplate(w, "dashboard", data)
+}
 
+// ----- Template Rendering -----
 func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
     t, err := template.ParseFiles("templates/" + tmpl + ".html")
     if err != nil {
-        http.Error(w, "Template error", 500)
+        http.Error(w, "Template error: "+err.Error(), 500)
         return
     }
     t.Execute(w, data)
