@@ -48,7 +48,6 @@ func execCommand(cmd string) string {
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
-func loginHandler(w http.ResponseWriter, r *http.Request) {
     session, _ := store.Get(r, "hiddendoor-session")
     if session.Values["user"] != nil {
         http.Redirect(w, r, "/dashboard", http.StatusFound)
