@@ -7,7 +7,8 @@ import (
     "net/http"
     "os/exec"
     "strings"
-
+	"encoding/base64"
+	"golang.org/x/crypto/argon2"
     "github.com/gorilla/sessions"
 )
 
@@ -20,9 +21,18 @@ var allowedCommands = []string{
 // Simulé (tu pourras remplacer par Argon2 plus tard)
 var passwordHash = "trhacknon"
 
-func verifyPassword(password string, encodedHash string) bool {
-    return password == encodedHash // Simulé
+const storedHash = "7BmFwU6ohzjnsotDgiS8i9mWC6De68K6vl90mec3H6Y"
+
+func hashPassword(password string) string {
+	salt := []byte("saltsaltsalt") // Utiliser un salt sécurisé et stocké séparément en prod
+	hash := argon2.IDKey([]byte(password), salt, 1, 64*1024, 4, 32)
+	return base64.RawStdEncoding.EncodeToString(hash)
 }
+
+func verifyPassword(password string) bool {
+	return hashPassword(password) == storedHash
+}
+
 
 func execCommand(cmd string) string {
     for _, allowed := range allowedCommands {
@@ -38,6 +48,7 @@ func execCommand(cmd string) string {
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
+func loginHandler(w http.ResponseWriter, r *http.Request) {
     session, _ := store.Get(r, "hiddendoor-session")
     if session.Values["user"] != nil {
         http.Redirect(w, r, "/dashboard", http.StatusFound)
@@ -47,7 +58,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method == http.MethodPost {
         r.ParseForm()
         password := r.FormValue("password")
-        if verifyPassword(password, passwordHash) {
+        if verifyPassword(password) {
             session.Values["user"] = "trhacknon"
             session.Save(r, w)
             http.Redirect(w, r, "/dashboard", http.StatusFound)
