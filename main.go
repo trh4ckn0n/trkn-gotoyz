@@ -129,8 +129,8 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 
 // ----- Main Entry -----
 func main() {
-    http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-    http.HandleFunc("/", loginHandler)
+    http.Handle("/assets/", http.StripPrefix("/assets/",
+    http.FileServer(http.Dir("assets"))))
     http.HandleFunc("/dashboard", dashboardHandler)
 
     fmt.Println("🧠 HiddenDoor démarré: http://localhost:9000")
