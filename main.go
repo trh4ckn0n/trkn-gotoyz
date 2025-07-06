@@ -89,6 +89,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func dashboardHandler(w http.ResponseWriter, r *http.Request) {
+    hostname, _ := os.Hostname()
+    now := time.Now().Format("02/01/2006 15:04:05")
+
+renderTemplate(w, "dashboard", map[string]string{
+    "Output":   output,
+    "Hostname": hostname,
+    "Time":     now,
+})
     session, _ := store.Get(r, "hiddendoor-session")
     if session.Values["user"] == nil {
         http.Redirect(w, r, "/", http.StatusFound)
@@ -109,8 +117,11 @@ func dashboardHandler(w http.ResponseWriter, r *http.Request) {
         "Time": time.Now().Format("02 Jan 2006 - 15:04:05"),
     }
 
-    renderTemplate(w, "dashboard", data)
-}
+renderTemplate(w, "dashboard", map[string]string{
+    "Output":   output,
+    "Hostname": hostname,
+    "Time":     now,
+})
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
     t, err := template.ParseFiles("templates/" + tmpl + ".html")
