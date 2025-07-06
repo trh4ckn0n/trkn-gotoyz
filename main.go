@@ -62,6 +62,18 @@ func systemInfo() string {
     return string(out)
 }
 
+// ----- Middleware -----
+func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        session, _ := store.Get(r, "hiddendoor-session")
+        if session.Values["user"] == nil {
+            http.Redirect(w, r, "/", http.StatusFound)
+            return
+        }
+        next.ServeHTTP(w, r)
+    }
+}
+
 // ----- Handlers -----
 func loginHandler(w http.ResponseWriter, r *http.Request) {
     session, _ := store.Get(r, "hiddendoor-session")
@@ -90,12 +102,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func dashboardHandler(w http.ResponseWriter, r *http.Request) {
-    session, _ := store.Get(r, "hiddendoor-session")
-    if session.Values["user"] == nil {
-        http.Redirect(w, r, "/", http.StatusFound)
-        return
-    }
-
     output := "🔐 Prêt à recevoir des commandes autorisées..."
     if r.Method == http.MethodPost {
         r.ParseForm()
@@ -108,7 +114,7 @@ func dashboardHandler(w http.ResponseWriter, r *http.Request) {
 
     data := map[string]interface{}{
         "Output":   output,
-        "User":     session.Values["user"],
+        "User":     "trhacknon",
         "SysInfo":  systemInfo(),
         "Hostname": hostname,
         "Time":     now,
@@ -131,7 +137,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 func main() {
     http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
     http.HandleFunc("/", loginHandler)
-    http.HandleFunc("/dashboard", dashboardHandler)
+    http.HandleFunc("/dashboard", authMiddleware(dashboardHandler))
 
     fmt.Println("🧠 HiddenDoor démarré: http://localhost:9000")
     log.Fatal(http.ListenAndServe(":9000", nil))
