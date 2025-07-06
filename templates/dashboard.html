@@ -22,5 +22,14 @@
             <p><a href="/">🔙 Quitter</a></p>
         </div>
     </div>
+
+<div class="terminal">
+    <h2>💻 Restricted Terminal</h2>
+    <form method="POST" action="/terminal">
+        <input type="text" name="cmd" placeholder="Commande autorisée (ex: uname -a)">
+        <button type="submit">Exécuter</button>
+    </form>
+    <pre class="output">En attente d'une commande...</pre>
+</div>
 </body>
 </html>
